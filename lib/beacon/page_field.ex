@@ -73,7 +73,7 @@ defmodule Beacon.PageField do
 
   @doc false
   def do_extra_fields(mods, form, params, errors) do
-    errors = traverse_errors(errors)
+    errors = traverse_errors(errors) |> dbg
 
     Enum.reduce(mods, %{}, fn mod, acc ->
       name = mod.name()
@@ -102,9 +102,13 @@ defmodule Beacon.PageField do
       end)
     end
 
-    Enum.reduce(errors, %{}, fn {:extra, {_msg, fields}}, acc ->
-      field = fields |> merge_fields.() |> Map.new(fn {k, v} -> {k, Enum.reverse(v)} end)
-      Map.merge(acc, field)
+    Enum.reduce(errors, %{}, fn
+      {:extra, {_msg, fields}}, acc ->
+        field = fields |> merge_fields.() |> Map.new(fn {k, v} -> {k, Enum.reverse(v)} end)
+        Map.merge(acc, field)
+
+      _, acc ->
+        acc
     end)
   end
 
