@@ -5,6 +5,7 @@
 #     mix run priv/repo/beacon_seeds.exs
 
 alias Beacon.Components
+alias Beacon.ComponentCategories
 alias Beacon.Pages
 alias Beacon.Layouts
 alias Beacon.Stylesheets
@@ -100,3 +101,12 @@ Pages.create_page_helper!(%{
     String.upcase(name)
   """
 })
+
+ComponentCategories.create_component_category!(%{ name: "Navigations" })
+ComponentCategories.create_component_category!(%{ name: "Headers" })
+ComponentCategories.create_component_category!(%{ name: "Sign in" })
+ComponentCategories.create_component_category!(%{ name: "Sign up" })
+ComponentCategories.create_component_category!(%{ name: "Stats" })
+ComponentCategories.create_component_category!(%{ name: "Footers" })
+ComponentCategories.create_component_category!(%{ name: "Basics" })
+ComponentCategories.create_component_category!(%{ name: "Navigation 1" })
