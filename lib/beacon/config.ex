@@ -49,6 +49,11 @@ defmodule Beacon.Config do
   @type template_formats :: [{format :: atom(), description :: String.t()}]
 
   @typedoc """
+  The atom key of a template format (e.g. `:heex`, `:markdown`)
+  """
+  @type template_format_key :: atom()
+
+  @typedoc """
   Register specific media types allowed for upload. Catchalls are not allowed.
   """
   @type allowed_media_types :: [media_type :: String.t()]
@@ -130,6 +135,7 @@ defmodule Beacon.Config do
           live_socket_path: live_socket_path(),
           safe_code_check: safe_code_check(),
           template_formats: template_formats(),
+          default_template_format: template_format_key(),
           assets: assets(),
           allowed_media_types: allowed_media_types(),
           lifecycle: lifecycle(),
@@ -176,6 +182,7 @@ defmodule Beacon.Config do
               {:heex, "HEEx (HTML)"},
               {:markdown, "Markdown (GitHub Flavored version)"}
             ],
+            default_template_format: :heex,
             assets: [],
             allowed_media_types: @default_media_types,
             lifecycle: [
@@ -197,6 +204,7 @@ defmodule Beacon.Config do
           | {:live_socket_path, live_socket_path()}
           | {:safe_code_check, safe_code_check()}
           | {:template_formats, template_formats()}
+          | {:default_template_format, template_format_key()}
           | {:assets, assets()}
           | {:allowed_media_types, allowed_media_types()}
           | {:lifecycle, lifecycle()}
@@ -237,6 +245,9 @@ defmodule Beacon.Config do
 
     Note that the default config is merged with your config.
 
+    * `:default_template_format` - `t:template_format_key/0` (optional).
+    Defaults to `:heex`.
+
     * `lifecycle` - `t:lifecycle/0` (optional).
     Note that the default config is merged with your config.
 
@@ -254,6 +265,7 @@ defmodule Beacon.Config do
         template_formats: [
           {:custom_format, "My Custom Format"}
         ],
+        default_template_format: :custom_format,
         lifecycle: [
           load_template: [
             {:custom_format,
@@ -288,6 +300,7 @@ defmodule Beacon.Config do
           markdown: "Markdown (GitHub Flavored version)",
           custom_format: "My Custom Format"
         ],
+        default_template_format: :custom_format,
         media_types: ["image/jpeg", "image/gif", "image/png", "image/webp"],
         assets:[
           {"image/*", [backends: [Beacon.Admin.MediaLibrary.Backend.Repo], validations: [&SomeModule.some_function/2]]},

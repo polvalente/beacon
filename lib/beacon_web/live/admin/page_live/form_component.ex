@@ -15,6 +15,7 @@ defmodule BeaconWeb.Admin.PageLive.FormComponent do
       |> assign(assigns)
       |> assign_form(changeset)
       |> assign_layouts()
+      |> assign(site: nil, format_update: "")
 
     {:ok, socket}
   end
@@ -30,6 +31,7 @@ defmodule BeaconWeb.Admin.PageLive.FormComponent do
       socket
       |> assign_form(changeset)
       |> assign_layouts(page_params)
+      |> maybe_assign_site(page_params)
 
     {:noreply, socket}
   end
@@ -82,15 +84,26 @@ defmodule BeaconWeb.Admin.PageLive.FormComponent do
     assign(socket, :site_layouts, layouts)
   end
 
+  defp maybe_assign_site(socket, page_params) do
+    selected_site =
+      case page_params["site"] do
+        "" -> nil
+        site -> String.to_existing_atom(site)
+      end
+
+    case socket.assigns do
+      %{site: ^selected_site} -> socket
+      %{site: _} -> assign(socket, site: selected_site, format_update: "ignore")
+    end
+  end
+
   defp layouts_to_options(layouts) do
     Enum.map(layouts, fn %Layout{id: id, title: title} ->
       {title, id}
     end)
   end
 
-  defp template_format_options(form) do
-    site = Ecto.Changeset.get_field(form.source, :site)
-
+  defp template_format_options(site) do
     if site do
       Keyword.new(
         Beacon.Config.fetch!(site).template_formats,
@@ -102,6 +115,9 @@ defmodule BeaconWeb.Admin.PageLive.FormComponent do
       []
     end
   end
+
+  defp default_template_format(nil), do: nil
+  defp default_template_format(site), do: Beacon.Config.fetch!(site).default_template_format
 
   defp list_sites, do: Layouts.list_distinct_sites_from_layouts()
 end

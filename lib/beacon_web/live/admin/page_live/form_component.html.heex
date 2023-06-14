@@ -7,7 +7,14 @@
     <.input field={@form[:site]} type="select" label="Site" prompt="..." options={list_sites()} />
     <.input field={@form[:path]} type="text" label="Path" />
     <.input field={@form[:title]} type="text" label="Title" />
-    <.input field={@form[:format]} type="select" label="Format" options={template_format_options(@form)} />
+    <.input
+      field={@form[:format]}
+      type="select"
+      label="Format"
+      options={template_format_options(@site)}
+      value={default_template_format(@site)}
+      phx-update={@format_update}
+    />
     <.input field={@form[:template]} type="textarea" label="Template" />
     <.input field={@form[:layout_id]} type="select" label="Template" prompt="..." options={layouts_to_options(@site_layouts)} />
 
